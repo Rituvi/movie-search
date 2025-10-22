@@ -647,10 +647,6 @@ body {
         gap: 1rem;
     }
     
-    .cast-details {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
     
     .footer-content {
         flex-direction: column;
