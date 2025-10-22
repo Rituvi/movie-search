@@ -108,16 +108,24 @@ class MovieSearchApp {
         const movieSearchBox = document.getElementById('movie-search-box');
         const castSearchBox = document.getElementById('cast-search-box');
         
+        // Clear any existing results
+        this.hideError();
+        document.getElementById('results-section').style.display = 'none';
+        
         if (type === 'movie') {
             movieTab.classList.add('active');
             castTab.classList.remove('active');
             movieSearchBox.style.display = 'flex';
             castSearchBox.style.display = 'none';
+            // Clear cast search input
+            document.getElementById('cast-search').value = '';
         } else if (type === 'cast') {
             castTab.classList.add('active');
             movieTab.classList.remove('active');
-            castSearchBox.style.display = 'flex';
             movieSearchBox.style.display = 'none';
+            castSearchBox.style.display = 'flex';
+            // Clear movie search input
+            document.getElementById('movie-search').value = '';
         }
     }
     
