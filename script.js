@@ -16,7 +16,10 @@ class MovieSearchApp {
         // Search functionality
         const searchInput = document.getElementById('movie-search');
         const searchBtn = document.getElementById('search-btn');
+        const castSearchInput = document.getElementById('cast-search');
+        const castSearchBtn = document.getElementById('cast-search-btn');
         
+        // Movie search
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 this.searchMovies();
@@ -25,6 +28,25 @@ class MovieSearchApp {
         
         searchBtn.addEventListener('click', () => {
             this.searchMovies();
+        });
+        
+        // Cast search
+        castSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.searchCast();
+            }
+        });
+        
+        castSearchBtn.addEventListener('click', () => {
+            this.searchCast();
+        });
+        
+        // Search tabs
+        const searchTabs = document.querySelectorAll('.search-tab');
+        searchTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                this.switchSearchType(tab.dataset.type);
+            });
         });
         
         // API key modal
@@ -80,6 +102,25 @@ class MovieSearchApp {
         }, 1000);
     }
     
+    switchSearchType(type) {
+        const movieTab = document.querySelector('[data-type="movie"]');
+        const castTab = document.querySelector('[data-type="cast"]');
+        const movieSearchBox = document.getElementById('movie-search-box');
+        const castSearchBox = document.getElementById('cast-search-box');
+        
+        if (type === 'movie') {
+            movieTab.classList.add('active');
+            castTab.classList.remove('active');
+            movieSearchBox.style.display = 'flex';
+            castSearchBox.style.display = 'none';
+        } else if (type === 'cast') {
+            castTab.classList.add('active');
+            movieTab.classList.remove('active');
+            castSearchBox.style.display = 'flex';
+            movieSearchBox.style.display = 'none';
+        }
+    }
+    
     async searchMovies() {
         const query = document.getElementById('movie-search').value.trim();
         
@@ -107,6 +148,40 @@ class MovieSearchApp {
         }
     }
     
+    async searchCast() {
+        const query = document.getElementById('cast-search').value.trim();
+        
+        if (!query) {
+            this.showError('Please enter an actor/actress name to search.');
+            return;
+        }
+        
+        if (!this.apiKey) {
+            this.showError('Please configure your API key first.');
+            this.showModal('api-modal');
+            return;
+        }
+        
+        this.currentQuery = query;
+        this.showLoading();
+        this.hideError();
+        
+        try {
+            // First, find the person ID
+            const person = await this.findPersonByName(query);
+            if (person) {
+                // Then get their movies
+                const movies = await this.fetchMoviesByCast(person.id);
+                this.displayMoviesByCast(movies, person.name);
+            } else {
+                this.showError('No actor/actress found with that name. Try a different search term.');
+            }
+        } catch (error) {
+            console.error('Cast search error:', error);
+            this.showError('Failed to search for movies by cast. Please check your API key and try again.');
+        }
+    }
+    
     async fetchMovies(query) {
         const url = `${this.baseUrl}/search/movie`;
         const params = new URLSearchParams({
@@ -124,6 +199,64 @@ class MovieSearchApp {
         
         const data = await response.json();
         return data.results || [];
+    }
+    
+    async findPersonByName(name) {
+        const url = `${this.baseUrl}/search/person`;
+        const params = new URLSearchParams({
+            api_key: this.apiKey,
+            query: name,
+            language: 'en-US',
+            page: 1
+        });
+        
+        const response = await fetch(`${url}?${params}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data.results && data.results.length > 0 ? data.results[0] : null;
+    }
+    
+    async fetchMoviesByCast(personId) {
+        const url = `${this.baseUrl}/person/${personId}/movie_credits`;
+        const params = new URLSearchParams({
+            api_key: this.apiKey,
+            language: 'en-US'
+        });
+        
+        const response = await fetch(`${url}?${params}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        // Sort by release date (most recent first) and limit to 20 movies
+        const movies = data.cast || [];
+        return movies
+            .filter(movie => movie.release_date) // Only movies with release dates
+            .sort((a, b) => new Date(b.release_date) - new Date(a.release_date))
+            .slice(0, 20);
+    }
+    
+    async fetchCastDetails(personId) {
+        const url = `${this.baseUrl}/person/${personId}`;
+        const params = new URLSearchParams({
+            api_key: this.apiKey,
+            language: 'en-US',
+            append_to_response: 'movie_credits'
+        });
+        
+        const response = await fetch(`${url}?${params}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
     }
     
     async fetchMovieDetails(movieId) {
@@ -167,6 +300,57 @@ class MovieSearchApp {
         });
         
         resultsSection.style.display = 'block';
+    }
+    
+    displayMoviesByCast(movies, actorName) {
+        this.hideLoading();
+        
+        if (movies.length === 0) {
+            this.showError(`No movies found for ${actorName}. Try a different actor/actress.`);
+            return;
+        }
+        
+        const resultsSection = document.getElementById('results-section');
+        const resultsTitle = document.getElementById('results-title');
+        const resultsCount = document.getElementById('results-count');
+        const resultsGrid = document.getElementById('results-grid');
+        
+        resultsTitle.textContent = `Movies featuring ${actorName}`;
+        resultsCount.textContent = `${movies.length} movie(s) found`;
+        
+        resultsGrid.innerHTML = '';
+        
+        movies.forEach(movie => {
+            const movieCard = this.createMovieCard(movie);
+            resultsGrid.appendChild(movieCard);
+        });
+        
+        resultsSection.style.display = 'block';
+    }
+    
+    createCastCard(person) {
+        const card = document.createElement('div');
+        card.className = 'cast-card';
+        card.addEventListener('click', () => this.showCastDetails(person.id));
+        
+        const photoUrl = person.profile_path 
+            ? `${this.imageBaseUrl}${person.profile_path}`
+            : 'https://via.placeholder.com/300x450?text=No+Photo';
+        
+        const popularity = person.popularity ? Math.round(person.popularity) : 0;
+        const knownFor = person.known_for ? person.known_for.slice(0, 3).map(movie => movie.title || movie.name).join(', ') : 'Unknown';
+        
+        card.innerHTML = `
+            <img src="${photoUrl}" alt="${person.name}" class="cast-photo" loading="lazy">
+            <div class="cast-info">
+                <h3 class="cast-name">${person.name}</h3>
+                <p class="cast-character">Known for: ${knownFor}</p>
+                <p class="cast-popularity">Popularity: ${popularity}</p>
+                <p class="cast-bio">${person.known_for_department || 'Actor/Actress'}</p>
+            </div>
+        `;
+        
+        return card;
     }
     
     createMovieCard(movie) {
@@ -278,6 +462,66 @@ class MovieSearchApp {
                         <div class="movie-details-cast">
                             <h4 class="cast-title">Main Cast</h4>
                             <p class="cast-list">${mainCast.join(', ')}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        
+        this.showModal('movie-modal');
+    }
+    
+    async showCastDetails(personId) {
+        this.showLoading();
+        
+        try {
+            const person = await this.fetchCastDetails(personId);
+            this.displayCastDetails(person);
+        } catch (error) {
+            console.error('Cast details error:', error);
+            this.hideLoading();
+            this.showError('Failed to load cast details. Please try again.');
+        }
+    }
+    
+    displayCastDetails(person) {
+        this.hideLoading();
+        
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        
+        modalTitle.textContent = person.name;
+        
+        const photoUrl = person.profile_path 
+            ? `${this.imageBaseUrl}${person.profile_path}`
+            : 'https://via.placeholder.com/300x450?text=No+Photo';
+        
+        const birthday = person.birthday ? new Date(person.birthday).toLocaleDateString() : 'Unknown';
+        const placeOfBirth = person.place_of_birth || 'Unknown';
+        const popularity = person.popularity ? Math.round(person.popularity) : 0;
+        
+        // Get filmography
+        const filmography = person.movie_credits?.cast || [];
+        const recentMovies = filmography.slice(0, 10).map(movie => movie.title).join(', ');
+        
+        modalBody.innerHTML = `
+            <div class="cast-details">
+                <img src="${photoUrl}" alt="${person.name}" class="cast-details-photo">
+                <div class="cast-details-info">
+                    <h2>${person.name}</h2>
+                    <div class="cast-details-meta">
+                        <span>🎂 ${birthday}</span>
+                        <span>📍 ${placeOfBirth}</span>
+                        <span>⭐ Popularity: ${popularity}</span>
+                    </div>
+                    <div class="cast-details-bio">
+                        <h4>Biography</h4>
+                        <p>${person.biography || 'No biography available.'}</p>
+                    </div>
+                    ${recentMovies ? `
+                        <div class="cast-filmography">
+                            <h4 class="filmography-title">Recent Movies</h4>
+                            <p class="filmography-list">${recentMovies}</p>
                         </div>
                     ` : ''}
                 </div>

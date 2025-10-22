@@ -42,7 +42,20 @@
             <!-- Search Section -->
             <section class="search-section">
                 <div class="search-container">
-                    <div class="search-box">
+                    <!-- Search Type Tabs -->
+                    <div class="search-tabs">
+                        <button class="search-tab active" data-type="movie">
+                            <i class="fas fa-film"></i>
+                            Search Movies
+                        </button>
+                        <button class="search-tab" data-type="cast">
+                            <i class="fas fa-users"></i>
+                            Find Movies by Cast
+                        </button>
+                    </div>
+                    
+                    <!-- Movie Search -->
+                    <div class="search-box" id="movie-search-box">
                         <input 
                             type="text" 
                             id="movie-search" 
@@ -52,9 +65,25 @@
                         >
                         <button id="search-btn" class="search-btn">
                             <i class="fas fa-search"></i>
-                            Search
+                            Search Movies
                         </button>
                     </div>
+                    
+                    <!-- Cast Search -->
+                    <div class="search-box" id="cast-search-box" style="display: none;">
+                        <input 
+                            type="text" 
+                            id="cast-search" 
+                            placeholder="Enter actor/actress name (e.g., Brad Pitt)..." 
+                            class="search-input"
+                            autocomplete="off"
+                        >
+                        <button id="cast-search-btn" class="search-btn">
+                            <i class="fas fa-search"></i>
+                            Find Movies by Cast
+                        </button>
+                    </div>
+                    
                     <div class="search-suggestions" id="search-suggestions"></div>
                 </div>
             </section>
