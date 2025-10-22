@@ -28,40 +28,29 @@ class MovieSearchApp {
             this.searchMovies();
         });
         
-        
-        
         // API key modal
         const apiKeyBtn = document.getElementById('api-key-btn');
         const apiModal = document.getElementById('api-modal');
         const closeApiModal = document.getElementById('close-api-modal');
         const saveApiKey = document.getElementById('save-api-key');
         
-        apiKeyBtn.addEventListener('click', () => {
-            this.showModal('api-modal');
-        });
+        if (apiKeyBtn) {
+            apiKeyBtn.addEventListener('click', () => {
+                this.showModal('api-modal');
+            });
+        }
         
-        closeApiModal.addEventListener('click', () => {
-            this.hideModal('api-modal');
-        });
+        if (closeApiModal) {
+            closeApiModal.addEventListener('click', () => {
+                this.hideModal('api-modal');
+            });
+        }
         
-        saveApiKey.addEventListener('click', () => {
-            this.saveApiKey();
-        });
-        
-        // Movie details modal
-        const movieModal = document.getElementById('movie-modal');
-        const closeModal = document.getElementById('close-modal');
-        
-        closeModal.addEventListener('click', () => {
-            this.hideModal('movie-modal');
-        });
-        
-        // Close modals when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal')) {
-                this.hideModal(e.target.id);
-            }
-        });
+        if (saveApiKey) {
+            saveApiKey.addEventListener('click', () => {
+                this.saveApiKey();
+            });
+        }
         
         // Retry button
         const retryBtn = document.getElementById('retry-btn');
@@ -82,8 +71,6 @@ class MovieSearchApp {
             this.showModal('api-modal');
         }, 1000);
     }
-    
-    // No tab switching needed - we have separate search boxes
     
     async searchMovies() {
         const query = document.getElementById('movie-search').value.trim();
@@ -112,7 +99,6 @@ class MovieSearchApp {
         }
     }
     
-    
     async fetchMovies(query) {
         const url = `${this.baseUrl}/search/movie`;
         const params = new URLSearchParams({
@@ -131,9 +117,6 @@ class MovieSearchApp {
         const data = await response.json();
         return data.results || [];
     }
-    
-    
-    
     
     async fetchMovieDetails(movieId) {
         const url = `${this.baseUrl}/movie/${movieId}`;
@@ -176,57 +159,6 @@ class MovieSearchApp {
         });
         
         resultsSection.style.display = 'block';
-    }
-    
-    displayMoviesByCast(movies, actorName) {
-        this.hideLoading();
-        
-        if (movies.length === 0) {
-            this.showError(`No movies found for ${actorName}. Try a different actor/actress.`);
-            return;
-        }
-        
-        const resultsSection = document.getElementById('results-section');
-        const resultsTitle = document.getElementById('results-title');
-        const resultsCount = document.getElementById('results-count');
-        const resultsGrid = document.getElementById('results-grid');
-        
-        resultsTitle.textContent = `Movies featuring ${actorName}`;
-        resultsCount.textContent = `${movies.length} movie(s) found`;
-        
-        resultsGrid.innerHTML = '';
-        
-        movies.forEach(movie => {
-            const movieCard = this.createMovieCard(movie);
-            resultsGrid.appendChild(movieCard);
-        });
-        
-        resultsSection.style.display = 'block';
-    }
-    
-    createCastCard(person) {
-        const card = document.createElement('div');
-        card.className = 'cast-card';
-        card.addEventListener('click', () => this.showCastDetails(person.id));
-        
-        const photoUrl = person.profile_path 
-            ? `${this.imageBaseUrl}${person.profile_path}`
-            : 'https://via.placeholder.com/300x450?text=No+Photo';
-        
-        const popularity = person.popularity ? Math.round(person.popularity) : 0;
-        const knownFor = person.known_for ? person.known_for.slice(0, 3).map(movie => movie.title || movie.name).join(', ') : 'Unknown';
-        
-        card.innerHTML = `
-            <img src="${photoUrl}" alt="${person.name}" class="cast-photo" loading="lazy">
-            <div class="cast-info">
-                <h3 class="cast-name">${person.name}</h3>
-                <p class="cast-character">Known for: ${knownFor}</p>
-                <p class="cast-popularity">Popularity: ${popularity}</p>
-                <p class="cast-bio">${person.known_for_department || 'Actor/Actress'}</p>
-            </div>
-        `;
-        
-        return card;
     }
     
     createMovieCard(movie) {
@@ -310,7 +242,6 @@ class MovieSearchApp {
         const genreTags = genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('');
         
         const director = movie.credits?.crew?.find(person => person.job === 'Director');
-        const mainCast = movie.credits?.cast?.slice(0, 5).map(actor => actor.name) || [];
         
         modalBody.innerHTML = `
             <div class="movie-details">
@@ -334,72 +265,6 @@ class MovieSearchApp {
                         <h4>Plot Summary</h4>
                         <p>${movie.overview || 'No overview available.'}</p>
                     </div>
-                    ${mainCast.length > 0 ? `
-                        <div class="movie-details-cast">
-                            <h4 class="cast-title">Main Cast</h4>
-                            <p class="cast-list">${mainCast.join(', ')}</p>
-                        </div>
-                    ` : ''}
-                </div>
-            </div>
-        `;
-        
-        this.showModal('movie-modal');
-    }
-    
-    async showCastDetails(personId) {
-        this.showLoading();
-        
-        try {
-            const person = await this.fetchCastDetails(personId);
-            this.displayCastDetails(person);
-        } catch (error) {
-            console.error('Cast details error:', error);
-            this.hideLoading();
-            this.showError('Failed to load cast details. Please try again.');
-        }
-    }
-    
-    displayCastDetails(person) {
-        this.hideLoading();
-        
-        const modalTitle = document.getElementById('modal-title');
-        const modalBody = document.getElementById('modal-body');
-        
-        modalTitle.textContent = person.name;
-        
-        const photoUrl = person.profile_path 
-            ? `${this.imageBaseUrl}${person.profile_path}`
-            : 'https://via.placeholder.com/300x450?text=No+Photo';
-        
-        const birthday = person.birthday ? new Date(person.birthday).toLocaleDateString() : 'Unknown';
-        const placeOfBirth = person.place_of_birth || 'Unknown';
-        const popularity = person.popularity ? Math.round(person.popularity) : 0;
-        
-        // Get filmography
-        const filmography = person.movie_credits?.cast || [];
-        const recentMovies = filmography.slice(0, 10).map(movie => movie.title).join(', ');
-        
-        modalBody.innerHTML = `
-            <div class="cast-details">
-                <img src="${photoUrl}" alt="${person.name}" class="cast-details-photo">
-                <div class="cast-details-info">
-                    <h2>${person.name}</h2>
-                    <div class="cast-details-meta">
-                        <span>🎂 ${birthday}</span>
-                        <span>📍 ${placeOfBirth}</span>
-                        <span>⭐ Popularity: ${popularity}</span>
-                    </div>
-                    <div class="cast-details-bio">
-                        <h4>Biography</h4>
-                        <p>${person.biography || 'No biography available.'}</p>
-                    </div>
-                    ${recentMovies ? `
-                        <div class="cast-filmography">
-                            <h4 class="filmography-title">Recent Movies</h4>
-                            <p class="filmography-list">${recentMovies}</p>
-                        </div>
-                    ` : ''}
                 </div>
             </div>
         `;
