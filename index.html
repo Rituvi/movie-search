@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Search Tool - Find Your Favorite Movies</title>
+    <meta name="description" content="Search for movies and get detailed information including plot, cast, ratings, and more using The Movie Database API.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-film"></i>
+                    <h1>Movie Search</h1>
+                </div>
+                <div class="api-key-section">
+                    <button id="api-key-btn" class="api-key-btn">
+                        <i class="fas fa-key"></i>
+                        API Key
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero-content">
+                    <h2 class="hero-title">Discover Amazing Movies</h2>
+                    <p class="hero-subtitle">Search for any movie and get detailed information including plot, cast, ratings, and more!</p>
+                </div>
+            </section>
+
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            id="movie-search" 
+                            placeholder="Enter movie title..." 
+                            class="search-input"
+                            autocomplete="off"
+                        >
+                        <button id="search-btn" class="search-btn">
+                            <i class="fas fa-search"></i>
+                            Search
+                        </button>
+                    </div>
+                    <div class="search-suggestions" id="search-suggestions"></div>
+                </div>
+            </section>
+
+            <!-- Loading Section -->
+            <section class="loading-section" id="loading-section" style="display: none;">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Searching for movies...</p>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="results-section" style="display: none;">
+                <div class="results-header">
+                    <h3 id="results-title">Search Results</h3>
+                    <div class="results-count" id="results-count"></div>
+                </div>
+                <div class="results-grid" id="results-grid"></div>
+            </section>
+
+            <!-- Movie Details Modal -->
+            <div class="modal" id="movie-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modal-title">Movie Details</h3>
+                        <button class="close-btn" id="close-modal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                        <!-- Movie details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Key Modal -->
+            <div class="modal" id="api-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>API Key Configuration</h3>
+                        <button class="close-btn" id="close-api-modal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="api-key-form">
+                            <p class="api-key-info">
+                                To use this tool, you need a free API key from The Movie Database (TMDb).
+                            </p>
+                            <div class="api-key-steps">
+                                <h4>How to get your API key:</h4>
+                                <ol>
+                                    <li>Visit <a href="https://www.themoviedb.org/settings/api" target="_blank">TMDb API Settings</a></li>
+                                    <li>Create a free account</li>
+                                    <li>Request an API key</li>
+                                    <li>Copy your API key</li>
+                                </ol>
+                            </div>
+                            <div class="form-group">
+                                <label for="api-key-input">Your TMDb API Key:</label>
+                                <input 
+                                    type="text" 
+                                    id="api-key-input" 
+                                    placeholder="Enter your API key here..."
+                                    class="api-key-input"
+                                >
+                                <button id="save-api-key" class="save-btn">Save API Key</button>
+                            </div>
+                            <div class="api-key-status" id="api-key-status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Section -->
+            <section class="error-section" id="error-section" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Oops! Something went wrong</h3>
+                    <p id="error-message">An error occurred while searching for movies.</p>
+                    <button id="retry-btn" class="retry-btn">Try Again</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 Movie Search Tool. Powered by <a href="https://www.themoviedb.org/" target="_blank">TMDb</a></p>
+                <div class="footer-links">
+                    <a href="https://www.themoviedb.org/" target="_blank">TMDb</a>
+                    <a href="https://github.com" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
