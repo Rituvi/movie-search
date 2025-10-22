@@ -28,29 +28,40 @@ class MovieSearchApp {
             this.searchMovies();
         });
         
+        
+        
         // API key modal
         const apiKeyBtn = document.getElementById('api-key-btn');
         const apiModal = document.getElementById('api-modal');
         const closeApiModal = document.getElementById('close-api-modal');
         const saveApiKey = document.getElementById('save-api-key');
         
-        if (apiKeyBtn) {
-            apiKeyBtn.addEventListener('click', () => {
-                this.showModal('api-modal');
-            });
-        }
+        apiKeyBtn.addEventListener('click', () => {
+            this.showModal('api-modal');
+        });
         
-        if (closeApiModal) {
-            closeApiModal.addEventListener('click', () => {
-                this.hideModal('api-modal');
-            });
-        }
+        closeApiModal.addEventListener('click', () => {
+            this.hideModal('api-modal');
+        });
         
-        if (saveApiKey) {
-            saveApiKey.addEventListener('click', () => {
-                this.saveApiKey();
-            });
-        }
+        saveApiKey.addEventListener('click', () => {
+            this.saveApiKey();
+        });
+        
+        // Movie details modal
+        const movieModal = document.getElementById('movie-modal');
+        const closeModal = document.getElementById('close-modal');
+        
+        closeModal.addEventListener('click', () => {
+            this.hideModal('movie-modal');
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                this.hideModal(e.target.id);
+            }
+        });
         
         // Retry button
         const retryBtn = document.getElementById('retry-btn');
@@ -71,6 +82,8 @@ class MovieSearchApp {
             this.showModal('api-modal');
         }, 1000);
     }
+    
+    // No tab switching needed - we have separate search boxes
     
     async searchMovies() {
         const query = document.getElementById('movie-search').value.trim();
@@ -99,6 +112,7 @@ class MovieSearchApp {
         }
     }
     
+    
     async fetchMovies(query) {
         const url = `${this.baseUrl}/search/movie`;
         const params = new URLSearchParams({
@@ -117,6 +131,9 @@ class MovieSearchApp {
         const data = await response.json();
         return data.results || [];
     }
+    
+    
+    
     
     async fetchMovieDetails(movieId) {
         const url = `${this.baseUrl}/movie/${movieId}`;
@@ -160,6 +177,8 @@ class MovieSearchApp {
         
         resultsSection.style.display = 'block';
     }
+    
+    
     
     createMovieCard(movie) {
         const card = document.createElement('div');
@@ -271,6 +290,8 @@ class MovieSearchApp {
         
         this.showModal('movie-modal');
     }
+    
+    
     
     saveApiKey() {
         const apiKeyInput = document.getElementById('api-key-input');

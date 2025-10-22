@@ -9,7 +9,6 @@ A modern, responsive web application for searching movies using The Movie Databa
 - **🎨 Modern UI**: Beautiful gradient design with smooth animations
 - **⭐ Movie Details**: Comprehensive movie information including:
   - Plot summary
-  - Cast and crew
   - Ratings and reviews
   - Release date and runtime
   - Genres and language
@@ -140,7 +139,7 @@ movie-search-web/
 
 4. **View movie details**
    - Click on any movie card to see detailed information
-   - View cast, crew, plot, ratings, and more
+   - View plot, ratings, and more
    - Click the X to close the details modal
 
 ### Features Explained
@@ -153,7 +152,6 @@ movie-search-web/
 
 #### Movie Details Modal
 - **Comprehensive info**: Everything about the movie
-- **Cast and crew**: Director and main actors
 - **Ratings**: User ratings and vote counts
 - **Genres**: Movie categories
 - **Plot summary**: Detailed description
@@ -249,7 +247,6 @@ Open browser developer tools (F12) and check:
 ### Endpoints Used
 - `/search/movie` - Search for movies
 - `/movie/{id}` - Get movie details
-- `/movie/{id}/credits` - Get cast and crew
 
 ## 🔒 Security
 
