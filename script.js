@@ -148,8 +148,10 @@ class MovieSearchApp {
     
     async searchCast() {
         console.log('searchCast function called!');
+        alert('searchCast function called!');
         const query = document.getElementById('cast-search').value.trim();
         console.log('Cast search query:', query);
+        alert('Query: ' + query);
         
         if (!query) {
             this.showError('Please enter an actor/actress name to search.');
