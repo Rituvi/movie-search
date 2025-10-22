@@ -182,14 +182,24 @@
                 window.movieSearchApp.searchCast();
             } else {
                 console.log('App not found, waiting...');
+                // Wait longer for the app to initialize
                 setTimeout(() => {
                     if (window.movieSearchApp) {
                         console.log('App found after wait, calling searchCast');
                         window.movieSearchApp.searchCast();
                     } else {
-                        alert('App still not found. Please refresh the page.');
+                        console.log('App still not found, trying again...');
+                        // Try one more time after a longer wait
+                        setTimeout(() => {
+                            if (window.movieSearchApp) {
+                                console.log('App found on second try, calling searchCast');
+                                window.movieSearchApp.searchCast();
+                            } else {
+                                alert('App not found. Please refresh the page and try again.');
+                            }
+                        }, 500);
                     }
-                }, 100);
+                }, 200);
             }
         }
     </script>
