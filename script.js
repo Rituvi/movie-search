@@ -41,13 +41,7 @@ class MovieSearchApp {
             this.searchCast();
         });
         
-        // Search tabs
-        const searchTabs = document.querySelectorAll('.search-tab');
-        searchTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                this.switchSearchType(tab.dataset.type);
-            });
-        });
+        // No tab switching needed - we have separate search boxes
         
         // API key modal
         const apiKeyBtn = document.getElementById('api-key-btn');
@@ -102,32 +96,7 @@ class MovieSearchApp {
         }, 1000);
     }
     
-    switchSearchType(type) {
-        const movieTab = document.querySelector('[data-type="movie"]');
-        const castTab = document.querySelector('[data-type="cast"]');
-        const movieSearchBox = document.getElementById('movie-search-box');
-        const castSearchBox = document.getElementById('cast-search-box');
-        
-        // Clear any existing results
-        this.hideError();
-        document.getElementById('results-section').style.display = 'none';
-        
-        if (type === 'movie') {
-            movieTab.classList.add('active');
-            castTab.classList.remove('active');
-            movieSearchBox.style.display = 'flex';
-            castSearchBox.style.display = 'none';
-            // Clear cast search input
-            document.getElementById('cast-search').value = '';
-        } else if (type === 'cast') {
-            castTab.classList.add('active');
-            movieTab.classList.remove('active');
-            movieSearchBox.style.display = 'none';
-            castSearchBox.style.display = 'flex';
-            // Clear movie search input
-            document.getElementById('movie-search').value = '';
-        }
-    }
+    // No tab switching needed - we have separate search boxes
     
     async searchMovies() {
         const query = document.getElementById('movie-search').value.trim();
