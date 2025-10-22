@@ -97,6 +97,7 @@ body {
 /* Search Section */
 .search-section {
     padding: 2rem 0;
+    position: relative;
 }
 
 .search-container {
@@ -111,8 +112,10 @@ body {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     padding: 4px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 10;
 }
 
 .search-tab {
@@ -154,6 +157,9 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 5;
+    margin-top: 0;
 }
 
 .search-box:focus-within {
@@ -770,6 +776,15 @@ body {
         font-size: 1rem;
     }
     
+    .search-tabs {
+        margin-bottom: 1rem;
+    }
+    
+    .search-tab {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
     .search-box {
         flex-direction: column;
     }
@@ -784,6 +799,11 @@ body {
     }
     
     .movie-details {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .cast-details {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
