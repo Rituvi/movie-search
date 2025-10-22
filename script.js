@@ -16,26 +16,6 @@ class MovieSearchApp {
         // Search functionality
         const searchInput = document.getElementById('movie-search');
         const searchBtn = document.getElementById('search-btn');
-        const castSearchInput = document.getElementById('cast-search');
-        const castSearchBtn = document.getElementById('cast-search-btn');
-        
-        // Debug: Check if elements exist
-        console.log('Cast search button element:', castSearchBtn);
-        console.log('Cast search input element:', castSearchInput);
-        
-        if (!castSearchBtn) {
-            alert('ERROR: Cast search button not found!');
-            return;
-        } else {
-            console.log('Cast search button found successfully!');
-        }
-        
-        // Simple test - add onclick directly to button
-        castSearchBtn.onclick = function(e) {
-            e.preventDefault();
-            alert('Button clicked via onclick!');
-            console.log('Button clicked via onclick!');
-        };
         
         // Movie search
         searchInput.addEventListener('keypress', (e) => {
@@ -48,21 +28,7 @@ class MovieSearchApp {
             this.searchMovies();
         });
         
-        // Cast search
-        castSearchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.searchCast();
-            }
-        });
         
-        castSearchBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('Cast search button clicked!');
-            alert('Cast search button clicked! Testing...');
-            this.searchCast();
-        });
-        
-        // No tab switching needed - we have separate search boxes
         
         // API key modal
         const apiKeyBtn = document.getElementById('api-key-btn');
@@ -146,43 +112,6 @@ class MovieSearchApp {
         }
     }
     
-    async searchCast() {
-        console.log('searchCast function called!');
-        alert('searchCast function called!');
-        const query = document.getElementById('cast-search').value.trim();
-        console.log('Cast search query:', query);
-        alert('Query: ' + query);
-        
-        if (!query) {
-            this.showError('Please enter an actor/actress name to search.');
-            return;
-        }
-        
-        if (!this.apiKey) {
-            this.showError('Please configure your API key first.');
-            this.showModal('api-modal');
-            return;
-        }
-        
-        this.currentQuery = query;
-        this.showLoading();
-        this.hideError();
-        
-        try {
-            // First, find the person ID
-            const person = await this.findPersonByName(query);
-            if (person) {
-                // Then get their movies
-                const movies = await this.fetchMoviesByCast(person.id);
-                this.displayMoviesByCast(movies, person.name);
-            } else {
-                this.showError('No actor/actress found with that name. Try a different search term.');
-            }
-        } catch (error) {
-            console.error('Cast search error:', error);
-            this.showError('Failed to search for movies by cast. Please check your API key and try again.');
-        }
-    }
     
     async fetchMovies(query) {
         const url = `${this.baseUrl}/search/movie`;
@@ -203,63 +132,8 @@ class MovieSearchApp {
         return data.results || [];
     }
     
-    async findPersonByName(name) {
-        const url = `${this.baseUrl}/search/person`;
-        const params = new URLSearchParams({
-            api_key: this.apiKey,
-            query: name,
-            language: 'en-US',
-            page: 1
-        });
-        
-        const response = await fetch(`${url}?${params}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data.results && data.results.length > 0 ? data.results[0] : null;
-    }
     
-    async fetchMoviesByCast(personId) {
-        const url = `${this.baseUrl}/person/${personId}/movie_credits`;
-        const params = new URLSearchParams({
-            api_key: this.apiKey,
-            language: 'en-US'
-        });
-        
-        const response = await fetch(`${url}?${params}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        // Sort by release date (most recent first) and limit to 20 movies
-        const movies = data.cast || [];
-        return movies
-            .filter(movie => movie.release_date) // Only movies with release dates
-            .sort((a, b) => new Date(b.release_date) - new Date(a.release_date))
-            .slice(0, 20);
-    }
     
-    async fetchCastDetails(personId) {
-        const url = `${this.baseUrl}/person/${personId}`;
-        const params = new URLSearchParams({
-            api_key: this.apiKey,
-            language: 'en-US',
-            append_to_response: 'movie_credits'
-        });
-        
-        const response = await fetch(`${url}?${params}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        return await response.json();
-    }
     
     async fetchMovieDetails(movieId) {
         const url = `${this.baseUrl}/movie/${movieId}`;

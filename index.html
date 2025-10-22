@@ -57,20 +57,6 @@
                         </button>
                     </div>
                     
-                    <!-- Cast Search -->
-                    <div class="search-box">
-                        <input 
-                            type="text" 
-                            id="cast-search" 
-                            placeholder="Enter cast name (e.g., Brad Pitt)..." 
-                            class="search-input"
-                            autocomplete="off"
-                        >
-                        <button id="cast-search-btn" class="search-btn" onclick="handleCastSearch()">
-                            <i class="fas fa-search"></i>
-                            Find Movies by Cast
-                        </button>
-                    </div>
                     
                     <div class="search-suggestions" id="search-suggestions"></div>
                 </div>
@@ -173,36 +159,6 @@
     </footer>
 
     <!-- Scripts -->
-    <script>
-        // Define handleCastSearch function immediately
-        function handleCastSearch() {
-            console.log('handleCastSearch called from HTML');
-            if (window.movieSearchApp) {
-                console.log('App found, calling searchCast');
-                window.movieSearchApp.searchCast();
-            } else {
-                console.log('App not found, waiting...');
-                // Wait longer for the app to initialize
-                setTimeout(() => {
-                    if (window.movieSearchApp) {
-                        console.log('App found after wait, calling searchCast');
-                        window.movieSearchApp.searchCast();
-                    } else {
-                        console.log('App still not found, trying again...');
-                        // Try one more time after a longer wait
-                        setTimeout(() => {
-                            if (window.movieSearchApp) {
-                                console.log('App found on second try, calling searchCast');
-                                window.movieSearchApp.searchCast();
-                            } else {
-                                alert('App not found. Please refresh the page and try again.');
-                            }
-                        }, 500);
-                    }
-                }, 200);
-            }
-        }
-    </script>
     <script src="script.js"></script>
 </body>
 </html>
