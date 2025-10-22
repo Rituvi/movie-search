@@ -598,5 +598,5 @@ class MovieSearchApp {
 
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new MovieSearchApp();
+    window.movieSearchApp = new MovieSearchApp();
 });
