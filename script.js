@@ -1,3 +1,23 @@
+// Global function for cast search button - make it available immediately
+window.handleCastSearch = function() {
+    console.log('handleCastSearch called');
+    if (window.movieSearchApp) {
+        console.log('App found, calling searchCast');
+        window.movieSearchApp.searchCast();
+    } else {
+        console.log('App not found, waiting...');
+        // Wait a bit and try again
+        setTimeout(() => {
+            if (window.movieSearchApp) {
+                console.log('App found after wait, calling searchCast');
+                window.movieSearchApp.searchCast();
+            } else {
+                alert('App still not found. Please refresh the page.');
+            }
+        }, 100);
+    }
+};
+
 // Movie Search Web Application
 class MovieSearchApp {
     constructor() {
@@ -606,23 +626,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Also make sure it's available immediately
 window.movieSearchApp = null;
-
-// Global function for cast search button
-function handleCastSearch() {
-    console.log('handleCastSearch called');
-    if (window.movieSearchApp) {
-        console.log('App found, calling searchCast');
-        window.movieSearchApp.searchCast();
-    } else {
-        console.log('App not found, waiting...');
-        // Wait a bit and try again
-        setTimeout(() => {
-            if (window.movieSearchApp) {
-                console.log('App found after wait, calling searchCast');
-                window.movieSearchApp.searchCast();
-            } else {
-                alert('App still not found. Please refresh the page.');
-            }
-        }, 100);
-    }
-}
