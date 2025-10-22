@@ -23,6 +23,12 @@ class MovieSearchApp {
         console.log('Cast search button element:', castSearchBtn);
         console.log('Cast search input element:', castSearchInput);
         
+        if (!castSearchBtn) {
+            alert('ERROR: Cast search button not found!');
+        } else {
+            console.log('Cast search button found successfully!');
+        }
+        
         // Movie search
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -44,6 +50,7 @@ class MovieSearchApp {
         castSearchBtn.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('Cast search button clicked!');
+            alert('Cast search button clicked! Testing...');
             this.searchCast();
         });
         

@@ -117,11 +117,11 @@ body {
     position: relative;
     z-index: 5;
     margin-top: 0;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem !important;
 }
 
 .search-box:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
 }
 
 .search-box:focus-within {
