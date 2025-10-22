@@ -25,9 +25,17 @@ class MovieSearchApp {
         
         if (!castSearchBtn) {
             alert('ERROR: Cast search button not found!');
+            return;
         } else {
             console.log('Cast search button found successfully!');
         }
+        
+        // Simple test - add onclick directly to button
+        castSearchBtn.onclick = function(e) {
+            e.preventDefault();
+            alert('Button clicked via onclick!');
+            console.log('Button clicked via onclick!');
+        };
         
         // Movie search
         searchInput.addEventListener('keypress', (e) => {
